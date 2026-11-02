@@ -1,9 +1,9 @@
 # ============================================================
 # 桌灵 DeskLing · GitHub Releases 自动发布
-# 触发：推送以 "v" 开头的标签（如 v0.2.0）自动构建三平台安装包
+# 触发：推送以 "v" 开头的标签（如 v1.0.0）即自动构建三平台安装包
 # 结果：每个平台产物上传到 GitHub Release，任何人可匿名下载
 #       （弥补 Gitee 对大文件匿名 raw 的 403 限制）
-# 前置：将本仓库推送到 GitHub（见 scripts/mirror-to-github.sh）
+# 前置：仓库已推送到 GitHub（见 scripts/mirror-to-github.sh）
 # ============================================================
 name: Release (GitHub)
 
@@ -15,8 +15,24 @@ on:
 permissions:
   contents: write   # 允许创建/上传 Release
 
+# 第一阶段：先创建空 Release（单任务，避免并发创建冲突）
 jobs:
+  create-release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: 创建 GitHub Release（等待各平台上传）
+        uses: softprops/action-gh-release@v2
+        with:
+          draft: false
+          prerelease: false
+          files: []
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  # 第二阶段：三平台并行构建并上传到上面的 Release
   build:
+    needs: create-release
     name: 构建 ${{ matrix.os }}
     strategy:
       fail-fast: false

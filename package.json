@@ -1,7 +1,7 @@
 {
   "name": "deskling",
   "productName": "桌灵 DeskLing",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "桌灵 DeskLing — 可插拔模块的桌面助手，当前含「任务进度/待办」模块，支持系统托盘右键与定时提醒。",
   "homepage": "https://gitee.com/blithesome/desktop-todo",
   "main": "src/main/index.js",

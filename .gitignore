@@ -11,3 +11,6 @@ userData/
 # 系统/编辑器
 .DS_Store
 Thumbs.db
+
+# 已发布安装包（由 CI 自动构建，不入库）
+release-assets/
