@@ -1,0 +1,13 @@
+# 依赖
+node_modules/
+
+# 打包产物
+dist/
+*.log
+
+# 用户数据（运行时生成，不入库）
+userData/
+
+# 系统/编辑器
+.DS_Store
+Thumbs.db
