@@ -123,6 +123,22 @@ npm run dist
 - 因此**下载安装包请登录 Gitee 后**，通过「发行版 → 对应版本」或直接进入 `release-assets/<版本>/` 文件夹**点击文件下载**（走网页会话，正常可用）。
 - 不要把 raw 文件链接发给未登录 Gitee 的人——对方会被 403 拦截。需要「任何人点开即下」可改用 GitHub Releases 或对象存储/CDN 托管安装包。
 
+### 4.3 通过 GitHub Releases 实现「任何人点开即下载」（推荐）
+
+Gitee 对大文件匿名下载有限制，而 **GitHub Releases 无此限制**：把仓库镜像到 GitHub 后，打 `v*` 标签即由 GitHub Actions（`.github/workflows/release.yml`）自动构建 **Windows `setup.exe` 安装向导 + 便携版、macOS `.dmg`、Linux AppImage/deb**，并上传到 Release，**任何人无需登录即可下载**，体验与你在 GitHub 截图里看到的一致。
+
+一次性准备（需一个 GitHub 私人令牌，repo 权限）：
+
+```bash
+# 1) 在 GitHub 新建一个空仓库（如 desktop-todo）
+# 2) 运行镜像脚本，把代码与标签推到 GitHub：
+GITHUB_TOKEN=ghp_xxx GITHUB_REPO=你的用户名/desktop-todo bash scripts/mirror-to-github.sh
+# 3) 在 GitHub 上给仓库打标签（或本地 git tag v0.2.0 && git push github v0.2.0）
+#    → 自动构建并发布到 https://github.com/你的用户名/desktop-todo/releases
+```
+
+> 说明：macOS 包在无签名证书时构建为未签名 `.dmg`，用户首次打开会有 Gatekeeper 提示，属正常现象；如需去除需配置 Apple 开发者证书。
+
 ---
 
 ## 5. 数据存放

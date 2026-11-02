@@ -1,0 +1,56 @@
+# ============================================================
+# 桌灵 DeskLing · GitHub Releases 自动发布
+# 触发：推送以 "v" 开头的标签（如 v0.2.0）自动构建三平台安装包
+# 结果：每个平台产物上传到 GitHub Release，任何人可匿名下载
+#       （弥补 Gitee 对大文件匿名 raw 的 403 限制）
+# 前置：将本仓库推送到 GitHub（见 scripts/mirror-to-github.sh）
+# ============================================================
+name: Release (GitHub)
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write   # 允许创建/上传 Release
+
+jobs:
+  build:
+    name: 构建 ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-latest
+            args: --linux
+          - os: windows-latest
+            args: --win
+          - os: macos-latest
+            args: --mac
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: 拉取代码
+        uses: actions/checkout@v4
+
+      - name: 配置 Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - name: 安装依赖
+        run: npm install
+
+      - name: 构建安装包
+        # 关闭自动签名：没有证书时跳过，仍产出可下载的安装包（macOS 会有 Gatekeeper 警告）
+        env:
+          CSC_IDENTITY_AUTO_DISCOVERY: "false"
+        run: npx electron-builder ${{ matrix.args }} --publish never
+
+      - name: 上传到 GitHub Release
+        uses: softprops/action-gh-release@v2
+        if: success()
+        with:
+          files: dist/**/*.{exe,zip,AppImage,deb,dmg}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
