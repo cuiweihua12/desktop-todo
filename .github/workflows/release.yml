@@ -51,6 +51,6 @@ jobs:
         with:
           tag_name: ${{ github.ref_name }}
           overwrite_files: true
-          files: dist/**/*.{exe,zip,AppImage,deb,dmg}
+          files: dist/*.{exe,zip,AppImage,deb,dmg}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
