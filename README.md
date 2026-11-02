@@ -94,11 +94,34 @@ npm run dist
 ```
 
 产物位于 `dist/` 目录：
-- Windows：`桌灵 DeskLing-0.1.0-setup.exe`
-- macOS：`桌灵 DeskLing-0.1.0.dmg`
+- Windows：`桌灵 DeskLing-0.1.0-setup.exe`（NSIS 安装向导，需在 Windows 构建）
+- macOS：`桌灵 DeskLing-0.1.0.dmg`（需在 macOS 构建）
 - Linux：`桌灵 DeskLing-0.1.0.AppImage` / `桌灵 DeskLing-0.1.0.deb`
 
 > 注：跨平台安装包建议在对应目标系统上构建（如 Windows 安装包最好在 Windows 构建）。本仓库已配置好 `electron-builder` 的 `win/mac/linux` 目标，CI 或本地按需选择。
+
+### 4.1 通过 Gitee Go 自动发版（免费）
+
+仓库已内置 Gitee Go 工作流 `.workflow/release.yml`：**推送以 `v` 开头的标签即自动构建** Linux（AppImage + deb）与 Windows（便携 zip，免 wine）安装包，并推回仓库的 `release-assets/<版本>/` 目录。
+
+一次性启用步骤：
+1. 进入仓库「流水线」页，点击「开通 Gitee Go」（免费，送构建时长）。
+2. 在「流水线 → 设置 → 变量」新增私密变量 `GITEE_TOKEN`，值为你的 Gitee 私人令牌（需 repo 权限）。
+3. 打标签发版：
+   ```bash
+   npm version patch          # 或手动改 package.json 的 version
+   git tag v0.2.0
+   git push origin v0.2.0     # 触发自动构建
+   ```
+4. 构建完成后，安装包出现在仓库 `release-assets/v0.2.0/`，登录 Gitee 即可下载。
+
+> 限制：Gitee Go 的 Linux 构建机**无法出 macOS(.dmg)**，且免费档有月度构建分钟额度；Windows 在 Linux 上只能出「便携 zip」（无安装向导），`.exe` 安装包仍需在 Windows 本地 `npm run dist:win`。
+
+### 4.2 下载说明（重要）
+
+- 仓库当前为**公开**，但 Gitee 对 **>~50MB 的大二进制禁用匿名 raw 直链（返回 403）**。
+- 因此**下载安装包请登录 Gitee 后**，通过「发行版 → 对应版本」或直接进入 `release-assets/<版本>/` 文件夹**点击文件下载**（走网页会话，正常可用）。
+- 不要把 raw 文件链接发给未登录 Gitee 的人——对方会被 403 拦截。需要「任何人点开即下」可改用 GitHub Releases 或对象存储/CDN 托管安装包。
 
 ---
 
