@@ -17,6 +17,8 @@
   "build": {
     "appId": "com.deskling.app",
     "productName": "桌灵 DeskLing",
+    "compression": "maximum",
+    "electronLanguages": ["zh-CN", "en-US"],
     "directories": {
       "output": "dist",
       "buildResources": "build"
@@ -26,8 +28,8 @@
       "package.json"
     ],
     "win": {
-      "target": ["nsis"],
-      "artifactName": "${productName}-${version}-setup.${ext}"
+      "target": ["nsis", "portable", "zip"],
+      "artifactName": "${productName}-${version}-${arch}.${ext}"
     },
     "mac": {
       "target": ["dmg"],
@@ -42,7 +44,8 @@
       "oneClick": false,
       "allowToChangeInstallationDirectory": true,
       "createDesktopShortcut": true,
-      "shortcutName": "桌灵 DeskLing"
+      "shortcutName": "桌灵 DeskLing",
+      "artifactName": "${productName}-${version}-setup.${ext}"
     }
   },
   "devDependencies": {
